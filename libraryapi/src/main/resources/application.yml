@@ -3,7 +3,7 @@ spring:
   application:
     name: libraryapi
 
-  #Conex�o
+  #Conexão
   datasource:
     url: jdbc:postgresql://localhost:5432/library
     username: postgres
@@ -14,7 +14,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl_auto: update # none, create, create-drop
+      ddl_auto: none # none, create, create-drop, update
     properties:
       hibernate.format_sql: true
 

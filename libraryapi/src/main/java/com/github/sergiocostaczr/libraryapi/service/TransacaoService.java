@@ -42,7 +42,7 @@ public class TransacaoService {
     public void executar(){
 
         Autor autor = new Autor();
-        autor.setName("France");
+        autor.setNome("France");
         autor.setNacionalidade("Brasileiro");
         autor.setDataNascimento(LocalDate.of(1950, 1, 21));
 
@@ -61,7 +61,7 @@ public class TransacaoService {
         //livroRepository.saveAndFlush(livro);
 
 
-        if (autor.getName().equals("test France")){
+        if (autor.getNome().equals("test France")){
             throw new RuntimeException("Rollback");
         }
 

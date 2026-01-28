@@ -23,6 +23,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
 
     //https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
 
+
     //Query Method
     // select * from livro where id_autor = id
     List<Livro> findByAutor(Autor autor);
@@ -92,6 +93,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     void updateDataPublicacao(LocalDate novaData);
 
 
+    boolean existsByAutor(Autor autor);
 
 
 
