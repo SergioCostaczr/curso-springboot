@@ -1,16 +1,13 @@
 package com.github.sergiocostaczr.libraryapi.controller;
 
 import com.github.sergiocostaczr.libraryapi.controller.dto.AutorDTO;
-import com.github.sergiocostaczr.libraryapi.controller.dto.ErroReposta;
+import com.github.sergiocostaczr.libraryapi.controller.dto.ErroResposta;
 import com.github.sergiocostaczr.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import com.github.sergiocostaczr.libraryapi.exceptions.RegistroDuplicadoException;
 import com.github.sergiocostaczr.libraryapi.model.Autor;
 import com.github.sergiocostaczr.libraryapi.service.AutorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.reflect.IReflectionWorld;
-import org.hibernate.cache.spi.support.RegionNameQualifier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,7 +16,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/autores")
@@ -31,10 +27,9 @@ public class AutorController {
 
 
     @PostMapping
-
     // ResponseEntity é uma classe que represanta uma resposta.
     // <> -> tipo do body do ResponseEntity.
-    public ResponseEntity<?> salvar(@RequestBody AutorDTO autor){
+    public ResponseEntity<?> salvar(@RequestBody @Valid AutorDTO autor){
         try {
             Autor autorEntidade = autor.mapearParaAutor();
             autorService.salvar(autorEntidade);
@@ -50,7 +45,7 @@ public class AutorController {
             //Retora com o status created com o URI
             return  ResponseEntity.created(location).build();
         } catch (RegistroDuplicadoException e) {
-            var erroDto = ErroReposta.conflito(e.getMessage());
+            var erroDto = ErroResposta.conflito(e.getMessage());
             return ResponseEntity.status(erroDto.status()).body(erroDto);
 
         }
@@ -83,7 +78,7 @@ public class AutorController {
             autorService.deletar(autorOptional.get());
             return ResponseEntity.noContent().build();
         } catch (OperacaoNaoPermitidaException e) {
-            var erroReposta = ErroReposta.reppostaPadrao(e.getMessage());
+            var erroReposta = ErroResposta.respostaPadrao(e.getMessage());
             return ResponseEntity.status(erroReposta.status()).body(erroReposta);
         }
     }
@@ -102,7 +97,7 @@ public class AutorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> atualizar(@PathVariable String id,@RequestBody AutorDTO autorDTO){
+    public ResponseEntity<?> atualizar(@PathVariable String id,@RequestBody @Valid AutorDTO autorDTO){
         try {
             UUID idAutor = UUID.fromString(id);
             Optional<Autor> autorOptional = autorService.obterPorId(idAutor);
@@ -122,7 +117,7 @@ public class AutorController {
 
             return ResponseEntity.noContent().build();
         } catch (RegistroDuplicadoException e) {
-            var erroDto = ErroReposta.conflito(e.getMessage());
+            var erroDto = ErroResposta.conflito(e.getMessage());
             return ResponseEntity.status(erroDto.status()).body(erroDto);
         }
 
