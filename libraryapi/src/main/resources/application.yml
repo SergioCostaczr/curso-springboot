@@ -1,4 +1,4 @@
-#https://docs.spring.io/spring-boot/appendix/application-properties/index.html#appendix.application-properties.data
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html#appendix.application-properties.data
 spring:
   application:
     name: libraryapi
@@ -14,7 +14,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl_auto: none # none, create, create-drop, update
+      ddl_auto: update # none, create, create-drop, update
     properties:
       hibernate.format_sql: true
 

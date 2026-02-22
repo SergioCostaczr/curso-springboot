@@ -17,31 +17,19 @@ public class AutorValidator {
         this.autorRepository = autorRepository;
     }
 
-
     public void validar(Autor autor){
         if(existeAutorCadastrado(autor)){
             throw new RegistroDuplicadoException("Autor ja cadastrado!");
-
         }
-
-
     }
 
     private boolean existeAutorCadastrado(Autor autor){
         Optional<Autor> autorOptional = autorRepository.findByNomeAndDataNascimentoAndNacionalidade(autor.getNome(), autor.getDataNascimento(),autor.getNacionalidade());
 
-
         if (autor.getId() == null){
             return  autorOptional.isPresent();
         }
-
         return !autor.getId().equals(autorOptional.get().getId()) && autorOptional.isPresent();
-
     }
-
-
-
-
-
 
 }

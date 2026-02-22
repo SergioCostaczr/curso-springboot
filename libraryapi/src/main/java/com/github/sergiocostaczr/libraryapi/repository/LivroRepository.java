@@ -5,6 +5,7 @@ import com.github.sergiocostaczr.libraryapi.model.GeneroLivro;
 import com.github.sergiocostaczr.libraryapi.model.Livro;
 import org.hibernate.annotations.ListIndexBase;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,15 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
- * @see LivroRepositoryTest
+ *
+ * @see <a href="https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html">JPA Query Methods</a>
  *
  */
-public interface LivroRepository extends JpaRepository<Livro, UUID> {
+public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecificationExecutor<Livro> {
 
-    //https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
+
 
 
     //Query Method
@@ -33,7 +36,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     //get'T'itulo
 
     // select * from livro where isbn = ?
-    List<Livro> findByIsbn(String isbn);
+    Optional<Livro> findByIsbn(String isbn);
 
     // select * from livro where titulo = ? and isbn = ?
     List<Livro> findByTituloAndPreco(String isbn, BigDecimal bigDecimal);

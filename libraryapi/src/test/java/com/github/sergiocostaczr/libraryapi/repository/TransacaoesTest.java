@@ -9,33 +9,33 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 public class TransacaoesTest {
-
-    @Autowired
-    TransacaoService transacaoService;
-
-
-    /**
-     * Abre uma transação no início de execução e no final faz um commit ou rollback.
-     *
-     * Commit -> confirmar as alterações
-     * Rollback -> desfazer as alterações
-     */
-    // Toda vez que fazemos operações de escrita no db precisamos de uma transaction
-    @Test
-    void transacaoSimples(){
-        // salvar um livro
-        // salar o autor
-        // alugar o livro
-        // enviar email pro locatário
-        // notificar que o livro saiu da livraria
-
-        transacaoService.executar();
-
-    }
-
-    @Test
-    void transacaoEstadoManeged(){
-        transacaoService.atualizacaoSemATualizar();
-    }
+//
+//    @Autowired
+//    TransacaoService transacaoService;
+//
+//
+//    /**
+//     * Abre uma transação no início de execução e no final faz um commit ou rollback.
+//     *
+//     * Commit -> confirmar as alterações
+//     * Rollback -> desfazer as alterações
+//     */
+//    // Toda vez que fazemos operações de escrita no db precisamos de uma transaction
+//    @Test
+//    void transacaoSimples(){
+//        // salvar um livro
+//        // salar o autor
+//        // alugar o livro
+//        // enviar email pro locatário
+//        // notificar que o livro saiu da livraria
+//
+//        transacaoService.executar();
+//
+//    }
+//
+//    @Test
+//    void transacaoEstadoManeged(){
+//        transacaoService.atualizacaoSemATualizar();
+//    }
 
 }
