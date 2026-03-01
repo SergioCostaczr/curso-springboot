@@ -29,6 +29,7 @@ public class LivroController implements GenericController {
     private final LivroService livroService;
     private final LivroMapper livroMapper;
 
+    //ROLE_OPERADOR
     @PostMapping
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<Object> salvar(@RequestBody @Valid CadastroLivroDTO dto) {

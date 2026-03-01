@@ -2,6 +2,7 @@ package com.github.sergiocostaczr.libraryapi.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
@@ -25,6 +26,9 @@ public class Usuario {
 
     @Column
     private String senha;
+
+    @NotBlank
+    private String email;
 
 
     @JdbcTypeCode(SqlTypes.ARRAY)

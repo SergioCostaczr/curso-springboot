@@ -55,7 +55,7 @@
                 <span class="input-group-text">
                     <i class="bi bi-envelope"></i>
                 </span>
-                <input type="email" class="form-control" name="username" placeholder="Digite seu email" required>
+                <input type="text" class="form-control" name="username" placeholder="Digite seu usuario" required>
             </div>
         </div>
 
@@ -75,6 +75,9 @@
             Entrar
         </button>
     </form>
+    <br />
+    <hr />
+    <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary w-100">Entrar com Google</a>
 </div>
 
 <!-- Bootstrap JS -->

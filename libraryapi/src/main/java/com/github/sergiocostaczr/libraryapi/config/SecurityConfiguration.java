@@ -1,6 +1,7 @@
 package com.github.sergiocostaczr.libraryapi.config;
 
 import com.github.sergiocostaczr.libraryapi.security.CustomUserDetailsService;
+import com.github.sergiocostaczr.libraryapi.security.LoginSocialSucessHandler;
 import com.github.sergiocostaczr.libraryapi.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +28,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSucessHandler loginSocialSucessHandler) throws Exception {
 
         return http
 //                .formLogin(configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html"))
@@ -37,7 +39,9 @@ public class SecurityConfiguration {
 
                 .csrf(AbstractHttpConfigurer::disable)
 
+//                 Diz ao Spring que a gente tem a nossa propia pagina de login
                 .formLogin(configurer -> configurer.loginPage("/login").permitAll())
+//                .formLogin(Customizer.withDefaults())
 
                 .httpBasic(Customizer.withDefaults())
 
@@ -56,6 +60,11 @@ public class SecurityConfiguration {
                     //Caso nao defina uma role em um endpoint basta estar autenticado para usar
                     authorize.anyRequest().authenticated();
                 })
+                .oauth2Login(oauth2-> {
+                    oauth2
+                        .loginPage("/login")
+                        .successHandler(loginSocialSucessHandler);
+                })
                 .build();
     }
 
@@ -64,7 +73,7 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
+//    @Bean
     public UserDetailsService userDetailsService(UsuarioService usuarioService) {
 
 //        UserDetails user1 = User.builder()
@@ -81,5 +90,11 @@ public class SecurityConfiguration {
 //
 //        return new InMemoryUserDetailsManager(user1, user2);
         return new CustomUserDetailsService(usuarioService);
+    }
+
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults(""); //tira o ROLE_
     }
 }

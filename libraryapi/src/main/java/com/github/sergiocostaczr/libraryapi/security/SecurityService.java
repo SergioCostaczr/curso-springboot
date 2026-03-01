@@ -18,10 +18,14 @@ public class SecurityService {
         //Busca Authentication no contexto do spring
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//        String login = userDetails.getUsername();
+//        return usuarioService.obterPorLogin(login);
 
-        String login = userDetails.getUsername();
+        if (authentication instanceof CustomAuthentication customAuthentication){
+            return customAuthentication.getUsuario();
+        }
 
-        return usuarioService.obterPorLogin(login);
+        return null;
     }
 }
