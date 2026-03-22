@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -27,7 +29,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(securedEnabled = true,jsr250Enabled = true)//habilita nos controllers
 public class SecurityConfiguration {
 
-    @Bean
+    @Bean //resource server
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSucessHandler loginSocialSucessHandler) throws Exception {
 
         return http
@@ -65,17 +67,18 @@ public class SecurityConfiguration {
                         .loginPage("/login")
                         .successHandler(loginSocialSucessHandler);
                 })
+                .oauth2ResourceServer(oauth2RS -> Customizer.withDefaults())
                 .build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder(10);
+//    }
 
 //    @Bean
-    public UserDetailsService userDetailsService(UsuarioService usuarioService) {
-
+//    public UserDetailsService userDetailsService(UsuarioService usuarioService) {
+//
 //        UserDetails user1 = User.builder()
 //                .username("username")
 //                .password(encoder.encode("123"))
@@ -89,12 +92,26 @@ public class SecurityConfiguration {
 //                .build();
 //
 //        return new InMemoryUserDetailsManager(user1, user2);
-        return new CustomUserDetailsService(usuarioService);
-    }
+//        return new CustomUserDetailsService(usuarioService);
+//    }
 
-
+    // Configura o prefixo ROLE
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults(){
         return new GrantedAuthorityDefaults(""); //tira o ROLE_
+    }
+
+
+    //SCOPE_xxx tem prefixo
+    // Configura no token JWT o prefixo SCOPE
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter(){
+        var authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthorityPrefix("");
+
+        var converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return converter;
     }
 }
