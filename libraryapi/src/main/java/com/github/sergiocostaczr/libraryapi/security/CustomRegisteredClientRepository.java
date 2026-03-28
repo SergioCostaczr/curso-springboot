@@ -38,16 +38,31 @@ public class CustomRegisteredClientRepository implements RegisteredClientReposit
             return null;
         }
 
+        //Representação de uma aplicação cliente dentro do Authorization Server.
         return RegisteredClient
                 .withId(client.getId().toString())
                 .clientId(client.getClientId())
                 .clientSecret(client.getClientSecret())
+                //redirectUri — no fluxo Authorization Code, após o usuário fazer login, o Authorization Server precisa saber para qual URL ele pode redirecionar o usuário com o código.
+                // Isso existe por segurança: evita que uma aplicação maliciosa registre outro redirect URI e roube o código.
                 .redirectUri(client.getRedirectURi())
+                //scope — o que esse client pode solicitar. No token final, os escopos aprovados ficam gravados.
+                // Assim o Resource Server consegue checar não só se o token é válido, mas se quem o pediu tinha permissão para aquele escopo específico.
                 .scope(client.getScope())
                 // auth metodo
+                /**
+                 * clientAuthenticationMethod(CLIENT_SECRET_BASIC) — define como o client prova sua identidade ao Authorization Server.
+                 * CLIENT_SECRET_BASIC significa que ele manda o clientId e o clientSecret no header Authorization usando o formato Basic Auth, ou seja, base64(clientId:clientSecret)
+                 */
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+
+                //Grant type é o nome do fluxo que define como um client obtém um token de acesso.
+                //authorizationGrantType — quais fluxos esse client tem permissão de usar. Um client pode suportar mais de um.
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                // renovar token
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                //tokenSettings — são as configurações dos tokens emitidos para esse client, definidas como bean
                 .tokenSettings(tokenSettings)
 //                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofDays(1)).build())
                 .clientSettings(clientSettings)

@@ -1,6 +1,7 @@
 package com.github.sergiocostaczr.libraryapi.config;
 
 import com.github.sergiocostaczr.libraryapi.security.CustomUserDetailsService;
+import com.github.sergiocostaczr.libraryapi.security.JwtCustomAuthenticationFilter;
 import com.github.sergiocostaczr.libraryapi.security.LoginSocialSucessHandler;
 import com.github.sergiocostaczr.libraryapi.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -30,7 +32,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Bean //resource server
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSucessHandler loginSocialSucessHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http
+            , LoginSocialSucessHandler loginSocialSucessHandler
+            , JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception {
 
         return http
 //                .formLogin(configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html"))
@@ -68,6 +72,8 @@ public class SecurityConfiguration {
                         .successHandler(loginSocialSucessHandler);
                 })
                 .oauth2ResourceServer(oauth2RS -> Customizer.withDefaults())
+                // apos gerar o token executa o filtro
+                .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
     }
 
