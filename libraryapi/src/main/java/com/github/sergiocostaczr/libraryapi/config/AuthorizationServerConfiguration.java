@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -48,7 +49,13 @@ public class AuthorizationServerConfiguration {
 
         OAuth2AuthorizationServerConfigurer auth2AuthorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
 
-        httpSecurity.with(auth2AuthorizationServerConfigurer, (authorizationServer) ->
+        // endpoints do Authorization Server
+        RequestMatcher endpointsMather = auth2AuthorizationServerConfigurer.getEndpointsMatcher();
+
+        httpSecurity
+                // Security matcher. Chain so age nos endpoints específicos
+                .securityMatcher(endpointsMather)
+                .with(auth2AuthorizationServerConfigurer, (authorizationServer) ->
                 authorizationServer
                         .oidc(Customizer.withDefaults())
         );

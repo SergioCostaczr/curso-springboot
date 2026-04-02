@@ -71,7 +71,7 @@ public class SecurityConfiguration {
                         .loginPage("/login")
                         .successHandler(loginSocialSucessHandler);
                 })
-                .oauth2ResourceServer(oauth2RS -> Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2RS -> oauth2RS.jwt(Customizer.withDefaults()))
                 // apos gerar o token executa o filtro
                 .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
