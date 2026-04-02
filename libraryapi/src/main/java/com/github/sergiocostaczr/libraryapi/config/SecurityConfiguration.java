@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                 .formLogin(configurer -> configurer.loginPage("/login").permitAll())
 //                .formLogin(Customizer.withDefaults())
 
-                .httpBasic(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
 
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/teste").permitAll();
