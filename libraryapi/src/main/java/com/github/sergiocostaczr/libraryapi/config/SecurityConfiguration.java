@@ -58,6 +58,8 @@ public class SecurityConfiguration {
                     authorize.requestMatchers("/v3/api-docs/**").permitAll();
                     authorize.requestMatchers("/swagger-ui/**").permitAll();
                     authorize.requestMatchers("/swagger-ui.html").permitAll();
+                    authorize.requestMatchers("/actuator/**").permitAll();
+                    
 //                    authorize.requestMatchers(HttpMethod.POST,"/autores/**").hasAuthority("CADASTRAR_USUARIO");
 //                    authorize.requestMatchers(HttpMethod.POST,"/autores/**").hasRole("ADMIN");
 //                    authorize.requestMatchers(HttpMethod.PUT,"/autores/**").hasRole("ADMIN");
