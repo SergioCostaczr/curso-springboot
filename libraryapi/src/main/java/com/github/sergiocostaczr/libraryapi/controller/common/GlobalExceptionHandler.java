@@ -5,6 +5,7 @@ import com.github.sergiocostaczr.libraryapi.controller.dto.ErroResposta;
 import com.github.sergiocostaczr.libraryapi.exceptions.CampoInvalidoException;
 import com.github.sergiocostaczr.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import com.github.sergiocostaczr.libraryapi.exceptions.RegistroDuplicadoException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice // Captura exception e retorna uma Response
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT) // Mapeia o retorno do metodo
     public ErroResposta handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("Erro de validação", e.getMessage());
         List<FieldError> fieldErrors = e.getFieldErrors();
         List<ErroCampo> listaErros = fieldErrors.stream()
                 .map(fe -> new ErroCampo(fe.getField(), fe.getDefaultMessage())).toList();
