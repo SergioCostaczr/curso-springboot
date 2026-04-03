@@ -9,10 +9,12 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +28,8 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.security.KeyPair;
@@ -43,30 +47,32 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     @Order(1) //Define a ordem. Dentro da cadeia de filtros ele será o primeiro
-    public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity httpSecurity)throws Exception{
+    public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-//        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-
-        OAuth2AuthorizationServerConfigurer auth2AuthorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
+        OAuth2AuthorizationServerConfigurer auth2Configurer = new OAuth2AuthorizationServerConfigurer();
 
         // endpoints do Authorization Server
-        RequestMatcher endpointsMather = auth2AuthorizationServerConfigurer.getEndpointsMatcher();
+        RequestMatcher endpointsMatcher = auth2Configurer.getEndpointsMatcher();
 
         httpSecurity
                 // Security matcher. Chain so age nos endpoints específicos
-                .securityMatcher(endpointsMather)
-                .with(auth2AuthorizationServerConfigurer, (authorizationServer) ->
-                authorizationServer
-                        .oidc(Customizer.withDefaults())
-        );
-
-
-        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(Customizer.withDefaults()); //plugin do oauth2 que permite que com o token pegar as informacoes do token
-
-        httpSecurity.oauth2ResourceServer(oauth2Rs-> oauth2Rs.jwt(Customizer.withDefaults()));
-
-        httpSecurity.formLogin(configurer-> configurer.loginPage("/login"));
+                .securityMatcher(endpointsMatcher)
+                .with(auth2Configurer, authorizationServer ->
+                        authorizationServer.oidc(Customizer.withDefaults())
+                )
+                //barra anonymous ANTES do filtro OAuth2
+                .authorizeHttpRequests(authorize ->
+                        authorize.anyRequest().authenticated()
+                )
+                .exceptionHandling(exceptions ->
+                        exceptions.defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                        )
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .oauth2ResourceServer(oauth2Rs -> oauth2Rs.jwt(Customizer.withDefaults()))
+                .formLogin(configurer -> configurer.loginPage("/login").permitAll());
 
         return httpSecurity.build();
     }
